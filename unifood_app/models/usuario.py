@@ -1,13 +1,11 @@
 from django.db import models
+from django.conf import settings
 
 class Usuario(models.Model):
-    id = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    senha = models.CharField(max_length=100)
-    data_nascimento = models.DateField()
-    telefone = models.CharField(max_length=15, blank=True, null=True)
-    endereco = models.CharField(max_length=255, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return self.nome
