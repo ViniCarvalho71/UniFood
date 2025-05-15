@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
 
 # Create your views here.
-def homeView(requests):
-    return HttpResponse("Hello World!")
+def Login(requests):
+    return render(requests, 'unifood_app/usuario/login.html')
