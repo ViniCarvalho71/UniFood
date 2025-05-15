@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import get_user_model
 from unifood_app.models import Usuario
 
@@ -33,6 +33,6 @@ def Registrar(requests):
         )
         
 
-        return HttpResponseRedirect("Unifood_app/usuario/login.html")
+        return redirect('/login/')
     elif requests.method == 'GET':
         return render(requests, 'unifood_app/usuario/registrar.html')
