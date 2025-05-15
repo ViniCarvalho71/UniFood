@@ -14,9 +14,13 @@ def Registrar(requests):
         password = requests.POST.get('password')
         confirm_password = requests.POST.get('confirm_password')
         ra = requests.POST.get('ra')
-        User = get_user_model()
-        
 
+        if password != confirm_password:
+            return render(requests, 'unifood_app/usuario/registrar.html', {
+                'erro': 'As senhas devem ser iguais.'
+            })
+        
+        User = get_user_model()
         user = User.objects.create_user(
             username=username,
             email=email,
