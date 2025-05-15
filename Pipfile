@@ -11,3 +11,7 @@ coverage = "*"
 
 [requires]
 python_version = "3.12"
+
+[scripts]
+cov = "coverage run --source=unifood_app manage.py test unifood_app.tests"
+cov_report = "coverage report"
