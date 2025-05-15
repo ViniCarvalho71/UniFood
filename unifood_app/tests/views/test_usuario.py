@@ -13,6 +13,27 @@ class UsuarioViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'unifood_app/usuario/registrar.html')
 
+        print("\nPágina de registro acessada com sucesso.")
+
+    def test_verify_confirm_password(self):
+        """Teste de verificação de senha"""
+
+        # Dados que serão enviados no POST
+        data = {
+            'username': 'novo_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte2',
+            'email': 'email@test.com',
+            'ra': '1234567890',
+        }
+
+        response = self.client.post('/registrar/', data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'As senhas devem ser iguais.')
+
+        print("\nSenhas conferem.")
+
     def test_usuario_view_post(self):
 
         """Teste de criação de usuário via POST"""
@@ -21,6 +42,7 @@ class UsuarioViewTest(TestCase):
         data = {
             'username': 'novo_usuario',
             'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
             'email': 'email@test.com',
             'ra': '1234567890',
         }
@@ -38,3 +60,4 @@ class UsuarioViewTest(TestCase):
 
         # Verifica se a resposta é um redirecionamento (status 302)
         self.assertEqual(response.status_code, 302)
+        print("\nUsuário criado com sucesso.")
