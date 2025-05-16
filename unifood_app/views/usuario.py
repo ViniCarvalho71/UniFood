@@ -22,9 +22,16 @@ def Login(requests):
                 if user:
                     login(requests, user)
                     messages.success(requests, 'Login realizado com sucesso!')
+                    return render(requests, '#', {
+                        'user': user,
+                        'success': 'Login realizado com sucesso!',
+                    })
             except:
-                messages.error(requests,f'Invalid RA or password')
-                return render(requests,'unifood_app/usuario/login.html',{'form': form})
+                messages.error(requests,f'Credenciais inválidas!')
+                return render(requests,'unifood_app/usuario/login.html',{
+                        'form': form,
+                        'error': 'Credenciais inválidas.'
+                    })
 
     elif requests.method == 'GET':
         form = LoginForm()
