@@ -1,7 +1,7 @@
 {% extends 'unifood_app/usuario/base_page.html' %}
 {% load bootstrap5 %}
 {% block content %}
-<div class="">
+<div class="border border-1 rounded-3 shadow-sm p-4" style="min-width: 400px; margin: auto;">
 <h1 class="text-center" style="color: #ff6600;">Crie sua conta</h1>
 <span style="color: red;">{{ error }}</span>
 
@@ -9,8 +9,10 @@
 
         {% csrf_token %}
         {% bootstrap_form form %}
-       
-        <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <div class="mt-5 d-flex justify-content-center " >
+            <button type="submit" class="btn btn-primary" style="min-width: 400px;">Cadastrar</button>
+        </div>
+        
     </form>
 </div>
 </div>

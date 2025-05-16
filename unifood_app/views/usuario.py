@@ -47,6 +47,22 @@ def Registrar(requests):
                     'form': form,
                     'error': 'As senhas devem ser iguais.'
                 })
+            if Usuario.objects.filter(ra=ra).exists():
+                return render(requests, 'unifood_app/usuario/registrar.html', {
+                    'form': form,
+                    'error': 'RA já cadastrado.'
+                })
+            if Usuario.objects.filter(user__username=username).exists():
+                return render(requests, 'unifood_app/usuario/registrar.html', {
+                    'form': form,
+                    'error': 'Usuário já cadastrado.'
+                })
+            
+            if Usuario.objects.filter(user__email=email).exists():
+                return render(requests, 'unifood_app/usuario/registrar.html', {
+                    'form': form,
+                    'error': 'Email já cadastrado.'
+                })
             
             User = get_user_model()
             user = User.objects.create_user(

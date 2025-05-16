@@ -61,3 +61,82 @@ class UsuarioViewTest(TestCase):
         # Verifica se a resposta é um redirecionamento (status 302)
         self.assertEqual(response.status_code, 302)
         print("\nUsuário criado com sucesso.")
+
+    def test_ra_already_exists(self):
+        """Teste de verificação de RA já existente"""
+
+        user1 = {
+            'username': 'novo_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
+            'email': 'email@test.com',
+            'ra': '1234567890',
+        }
+
+        user2 = {
+            'username': 'outro_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
+            'email': 'email@test.com',
+            'ra': '1234567890',
+        }
+
+        # Cria o primeiro usuário
+        self.client.post('/registrar/', user1)
+        # Tenta criar o segundo usuário com o mesmo RA
+        response = self.client.post('/registrar/', user2)
+        # Verifica se a mensagem de erro está presente na resposta 
+        self.assertContains(response, 'RA já cadastrado.')
+        print("\nRA já cadastrado.")
+    
+    def test_username_already_exists(self):
+        """Teste de verificação de username já existente"""
+
+        user1 = {
+            'username': 'novo_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
+            'email': 'email@test.com',
+            'ra': '123456432',
+        }
+
+        user2 = {
+            'username': 'novo_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
+            'email': 'email@test.com',
+            'ra': '1234567890',
+        }
+
+        self.client.post('/registrar/', user1)
+        response = self.client.post('/registrar/', user2)
+
+        # Verifica se a mensagem de erro está presente na resposta
+        self.assertContains(response, 'Usuário já cadastrado.')
+
+    print("\nUsuario já cadastrado.")
+
+    def test_email_already_exists(self):
+        """Teste de verificação de email já existente"""
+
+        user1 = {
+            'username': 'novo_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
+            'email': 'teste@gmail.com',
+            'ra': '1234567890',
+        }
+        user2 = {
+            'username': 'outro_usuario',
+            'password': 'senha_forte',
+            'confirm_password': 'senha_forte',
+            'email': 'teste@gmail.com',
+            'ra': '1234567891',
+        }    
+
+        self.client.post('/registrar/', user1)
+        response = self.client.post('/registrar/', user2)
+        # Verifica se a mensagem de erro está presente na resposta  
+        self.assertContains(response, 'Email já cadastrado.')
+        
+        print("\nEmail já cadastrado.")               
