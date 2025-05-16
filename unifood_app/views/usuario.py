@@ -1,38 +1,67 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib import messages
 from unifood_app.models import Usuario
+from unifood_app.forms import RegisterForm, LoginForm
 
 
 # Create your views here.
 def Login(requests):
-    return render(requests, 'unifood_app/usuario/login.html')
+
+    if requests.method == 'POST':
+        form = LoginForm(requests.POST)
+        print(form)
+
+        if form.is_valid():
+            ra = form.cleaned_data['ra']
+            password = form.cleaned_data['password']
+
+            try:
+                user = Usuario.objects.get(ra=ra)
+                user = authenticate(requests, username=user.user.username, password=password)
+
+                if user:
+                    login(requests, user)
+                    messages.success(requests, 'Login realizado com sucesso!')
+            except:
+                messages.error(requests,f'Invalid RA or password')
+                return render(requests,'unifood_app/usuario/login.html',{'form': form})
+
+    elif requests.method == 'GET':
+        form = LoginForm()
+        messages.success(requests, 'Login realizado com sucesso!')
+        return render(requests, 'unifood_app/usuario/login.html', {'form':form})
 
 def Registrar(requests):
     if requests.method == 'POST':
-        username = requests.POST.get('username')
-        email = requests.POST.get('email')
-        password = requests.POST.get('password')
-        confirm_password = requests.POST.get('confirm_password')
-        ra = requests.POST.get('ra')
+        form = RegisterForm(requests.POST)
 
-        if password != confirm_password:
-            return render(requests, 'unifood_app/usuario/registrar.html', {
-                'erro': 'As senhas devem ser iguais.'
-            })
-        
-        User = get_user_model()
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-        )
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            confirm_password = form.cleaned_data['confirm_password']
+            ra = form.cleaned_data['ra']
 
-        Usuario.objects.create( 
-            user=user,
-            ra=ra,
-        )
-        
+            if password != confirm_password:
+                
+                return render(requests, 'unifood_app/usuario/registrar.html', {
+                    'form': form,
+                    'error': 'As senhas devem ser iguais.'
+                })
+            
+            User = get_user_model()
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+            )
 
-        return redirect('/login/')
+            Usuario.objects.create( 
+                user=user,
+                ra=ra,
+            )
+            return redirect('/login/')
     elif requests.method == 'GET':
-        return render(requests, 'unifood_app/usuario/registrar.html')
+        form = RegisterForm()
+        return render(requests, 'unifood_app/usuario/registrar.html', {'form': form})
