@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class UsuarioViewTest(TestCase):
+class UsuarioRegistrarViewTest(TestCase):
     def test_usuario_view_get(self):
         """Teste de acesso à página de registro de usuário"""
         response = self.client.get(reverse('registrar'))  # ou 'usuarios:registrar' se tiver namespace
@@ -13,7 +13,7 @@ class UsuarioViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'unifood_app/usuario/registrar.html')
 
-        print("\nPágina de registro acessada com sucesso.")
+        print("\nRegistrar: Página de registro acessada com sucesso.")
 
     def test_verify_confirm_password(self):
         """Teste de verificação de senha"""
@@ -32,10 +32,9 @@ class UsuarioViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'As senhas devem ser iguais.')
 
-        print("\nSenhas conferem.")
+        print("\nRegistrar: Senhas conferem.")
 
     def test_usuario_view_post(self):
-
         """Teste de criação de usuário via POST"""
 
         # Dados que serão enviados no POST
@@ -60,7 +59,7 @@ class UsuarioViewTest(TestCase):
 
         # Verifica se a resposta é um redirecionamento (status 302)
         self.assertEqual(response.status_code, 302)
-        print("\nUsuário criado com sucesso.")
+        print("\nRegistrar: Usuário criado com sucesso.")
 
     def test_ra_already_exists(self):
         """Teste de verificação de RA já existente"""
@@ -87,7 +86,7 @@ class UsuarioViewTest(TestCase):
         response = self.client.post('/registrar/', user2)
         # Verifica se a mensagem de erro está presente na resposta 
         self.assertContains(response, 'RA já cadastrado.')
-        print("\nRA já cadastrado.")
+        print("\nRegistrar: RA já cadastrado.")
     
     def test_username_already_exists(self):
         """Teste de verificação de username já existente"""
@@ -114,7 +113,7 @@ class UsuarioViewTest(TestCase):
         # Verifica se a mensagem de erro está presente na resposta
         self.assertContains(response, 'Usuário já cadastrado.')
 
-    print("\nUsuario já cadastrado.")
+        print("\nRegistrar: Usuario já cadastrado.")
 
     def test_email_already_exists(self):
         """Teste de verificação de email já existente"""
@@ -139,4 +138,48 @@ class UsuarioViewTest(TestCase):
         # Verifica se a mensagem de erro está presente na resposta  
         self.assertContains(response, 'Email já cadastrado.')
         
-        print("\nEmail já cadastrado.")               
+        print("\nRegistrar: Email já cadastrado.")
+
+class UsuarioLoginViewTest(TestCase):
+    def test_usuario_view_get(self):
+        """Teste de acesso à página de login de usuário"""
+        response = self.client.get(reverse('login'))  # ou 'usuarios:login' se tiver namespace
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'unifood_app/usuario/login.html')
+
+        print("\nLogin: Página de login acessada com sucesso.")
+
+    def test_usuario_view_post_error(self):
+        """Teste de login de usuário via POST"""
+
+        # Dados que serão enviados no POST
+        data = {
+            'ra': '123123123',
+            'password': 'senha_forte',
+        }
+
+        # Envia POST para a URL /login/
+        response = self.client.post('/login/', data)
+        # Verifica se o usuário foi logado
+        self.assertContains(response, 'Credenciais inválidas!')
+        print("\nLogin: Credenciais inválidas!")
+
+    def test_usuario_view_post_success(self):
+        """Teste de login de usuário via POST"""
+
+        # Cria um usuário para o teste
+        user = User.objects.create_user(username='usuario_teste', password='senha_forte')
+        usuario = Usuario.objects.create(user=user, ra='123123123')
+
+        # Dados que serão enviados no POST
+        data = {
+            'ra': '123123123',
+            'password': 'senha_forte',
+        }
+
+        # Envia POST para a URL /login/
+        response = self.client.post('/login/', data)
+        # Verifica se o usuário foi autenticado
+        self.assertTrue(response.context['user'].is_authenticated)
+        print("\nLogin: Usuário autenticado!")
