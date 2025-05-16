@@ -10,7 +10,6 @@ def Login(requests):
 
     if requests.method == 'POST':
         form = LoginForm(requests.POST)
-        print(form)
 
         if form.is_valid():
             ra = form.cleaned_data['ra']
@@ -29,7 +28,6 @@ def Login(requests):
 
     elif requests.method == 'GET':
         form = LoginForm()
-        messages.success(requests, 'Login realizado com sucesso!')
         return render(requests, 'unifood_app/usuario/login.html', {'form':form})
 
 def Registrar(requests):
