@@ -1,16 +1,24 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib import messages
+from django.contrib.sessions.models import Session
 from unifood_app.models import Usuario
 from unifood_app.forms import RegisterForm, LoginForm
 
 
 # Create your views here.
 def Login(requests):
+    
+    if requests.user.is_authenticated:
+            print("Usuário já autenticado!")
+            return render(requests, 'unifood_app/usuario/teste.html', {
+                        'success': 'Login realizado com sucesso!',
+                    })
 
     if requests.method == 'POST':
         form = LoginForm(requests.POST)
 
+        # Validando formulário
         if form.is_valid():
             ra = form.cleaned_data['ra']
             password = form.cleaned_data['password']
