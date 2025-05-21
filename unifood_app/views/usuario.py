@@ -1,18 +1,17 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib import messages
-from django.contrib.sessions.models import Session
+from django.contrib.auth import logout
+from django.contrib.auth.password_validation import validate_password
 from unifood_app.models import Usuario
 from unifood_app.forms import RegisterForm, LoginForm
 
 
 # Create your views here.
 def Login(requests):
-    
     if requests.user.is_authenticated:
-            print("Usuário já autenticado!")
             return render(requests, 'unifood_app/usuario/teste.html', {
-                        'success': 'Login realizado com sucesso!',
+                        'is_authenticated': True,
                     })
 
     if requests.method == 'POST':
@@ -27,13 +26,18 @@ def Login(requests):
                 user = Usuario.objects.get(ra=ra)
                 user = authenticate(requests, username=user.user.username, password=password)
 
-                if user:
+                if user is not None:
                     login(requests, user)
-                    messages.success(requests, 'Login realizado com sucesso!')
-                    return render(requests, '#', {
+                    return render(requests, 'unifood_app/usuario/teste.html', {
                         'user': user,
                         'success': 'Login realizado com sucesso!',
                     })
+                else:
+                    messages.error(requests,f'Credenciais inválidas!')
+                    return render(requests,'unifood_app/usuario/login.html',{
+                            'form': form,
+                            'error': 'Credenciais inválidas.'
+                        })
             except:
                 messages.error(requests,f'Credenciais inválidas!')
                 return render(requests,'unifood_app/usuario/login.html',{
@@ -94,3 +98,8 @@ def Registrar(requests):
     elif requests.method == 'GET':
         form = RegisterForm()
         return render(requests, 'unifood_app/usuario/registrar.html', {'form': form})
+    
+def Logout(requests):
+    logout(requests)
+    form = LoginForm()
+    return redirect('/login/', {'form': form, 'user': requests.user})

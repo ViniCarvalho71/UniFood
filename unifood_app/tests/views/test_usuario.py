@@ -180,6 +180,29 @@ class UsuarioLoginViewTest(TestCase):
 
         # Envia POST para a URL /login/
         response = self.client.post('/login/', data)
+
         # Verifica se o usuário foi autenticado
         self.assertTrue(response.context['user'].is_authenticated)
-        print("\nLogin: Usuário autenticado!")
+        print("\nLogin: Usuário Logado!")
+
+    def test_usuario_logout(self):
+        """Teste de logout de usuário"""
+        # Cria um usuário para o teste
+        user = User.objects.create_user(username='usuario_teste', password='senha_forte')
+        usuario = Usuario.objects.create(user=user, ra='123123123')
+
+        # Dados que serão enviados no POST
+        data = {
+            'ra': '123123123',
+            'password': 'senha_forte',
+        }
+
+        # Envia POST para a URL /login/
+        response_login = self.client.post('/login/', data)
+
+        # Envia POST para a URL /logout/
+        response_logout = self.client.post('/logout/')
+        
+        # Verifica se o usuário foi deslogado
+        self.assertFalse(response_logout.context['user'].is_authenticated)
+        print("\nLogout: Usuário deslogado!")
