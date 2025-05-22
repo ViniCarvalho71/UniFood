@@ -1,12 +1,9 @@
 name: Run Django Tests
 
-on:
-    push:
-        branches:
-        - main
+on: push
 
 jobs:
-    test:
+    installing_dependencies:
         runs-on: ubuntu-latest
 
         steps:
@@ -27,6 +24,23 @@ jobs:
           run: |
             pipenv install
 
+    tests:
+        runs-on: ubuntu-latest
+
+        steps:
         - name: Run Django tests
           run: |
             pipenv run cov
+
+    deploy:
+        runs-on: ubuntu-latest
+        needs: tests
+        if: success() && github.ref == 'refs/heads/prod'
+        steps:
+        - name: Build Image
+          run: |
+            echo "Building image...."
+
+        - name: Deploying Image
+          run: |
+            echo "Deploying image...."
