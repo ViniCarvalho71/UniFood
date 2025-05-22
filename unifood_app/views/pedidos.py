@@ -26,7 +26,7 @@ def criar_pedido(request):
 
 def lista_pedidos(request):
     pedidos = Pedido.objects.all()
-    return render(request, 'pedidos/lista.html', {'pedidos': pedidos})
+    return render(request, 'unifood_app/pedidos/lista.html', {'pedidos': pedidos})
 
 def detalhe_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)
