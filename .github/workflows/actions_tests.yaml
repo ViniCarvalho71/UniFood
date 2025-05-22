@@ -3,7 +3,7 @@ name: Run Django Tests
 on: push
 
 jobs:
-    installing_dependencies:
+    tests:
         runs-on: ubuntu-latest
 
         steps:
@@ -24,10 +24,6 @@ jobs:
           run: |
             pipenv install
 
-    tests:
-        runs-on: ubuntu-latest
-
-        steps:
         - name: Run Django tests
           run: |
             pipenv run cov
