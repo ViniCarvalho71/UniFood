@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from models import Pedido
-from models import Produto  # Ainda não adicionado
+from unifood_app.models import Pedido
+from unifood_app.models import Produto
 from decimal import Decimal
 from django.urls import reverse
 
