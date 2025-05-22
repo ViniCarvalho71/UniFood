@@ -102,4 +102,4 @@ def Registrar(requests):
 def Logout(requests):
     logout(requests)
     form = LoginForm()
-    return redirect('/login/', {'form': form, 'user': requests.user})
+    return redirect('/login/', {form: form})
