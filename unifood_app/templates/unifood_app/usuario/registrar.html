@@ -1,19 +1,16 @@
 {% extends 'unifood_app/usuario/base_page.html' %}
-{% load bootstrap5 %}
 {% block content %}
-<div class="border border-1 rounded-3 shadow-sm p-4" style="min-width: 400px; margin: auto;">
-<h1 class="text-center" style="color: #ff6600;">Crie sua conta</h1>
-<span style="color: red;">{{ error }}</span>
-
-    <form action="/registrar/" method="POST" class="form">
-
-        {% csrf_token %}
-        {% bootstrap_form form %}
-        <div class="mt-5 d-flex justify-content-center " >
-            <button type="submit" class="btn btn-primary" style="min-width: 400px;">Cadastrar</button>
-        </div>
-        
-    </form>
-</div>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4" style="max-width: 400px; border: 1px solid #ffcc99; border-radius: 8px;">
+        <h1 class="text-center" style="color: #ff6600;">Registrar</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn w-100 text-white mt-3" style="background-color: #ff6600;">Entrar</button>
+        </form>
+        {% if error_message %}
+            <p class="text-danger text-center mt-3">{{ error_message }}</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
