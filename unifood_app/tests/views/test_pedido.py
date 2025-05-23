@@ -11,10 +11,13 @@ class PedidoViewTest(TestCase):
         self.vendedor = User.objects.create_user(username='vendedor', password='senha123')
 
         self.produto = Produto.objects.create(
+            vendedor=self.vendedor,
             nome='Produto Teste',
             descricao='Descrição',
             preco=Decimal('50.00'),
-            vendedor=self.vendedor
+            estoque = 10,
+            foto = 'media/produtos/fotos/6159Mountain-Gaot.jpg'
+
         )
 
         self.client = Client()

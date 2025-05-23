@@ -6,6 +6,6 @@ urlpatterns = [
     path('registrar/', usuario.Registrar, name="registrar"),
     path('logout/', usuario.Logout, name="logout"),
     path('produto/cadastro', produto.Cadastro, name="cadastro"),
-    path('pedido/listar', pedidos.lista_pedidos, name="listar")
-
+    path('pedido/listar', pedidos.lista_pedidos, name="listar"),
+    path('pedido/criar_pedido', pedidos.criar_pedido, name="criar_pedido")
 ]
