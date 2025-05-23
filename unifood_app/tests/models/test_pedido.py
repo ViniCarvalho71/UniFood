@@ -35,12 +35,3 @@ class PedidoModelTest(TestCase):
 
         print('Pedido criado com sucesso!')
     
-    def test_str_do_pedido(self):
-        pedido = Pedido.objects.create(
-            cliente=self.cliente,
-            vendedor=self.vendedor,
-            endereco_entrega='Rua Teste, 123',
-            valor_total=Decimal('100.00')
-        )
-        esperado = f"{pedido}"
-        self.assertEqual(str(pedido), esperado)
