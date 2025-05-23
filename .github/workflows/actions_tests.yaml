@@ -13,7 +13,7 @@ jobs:
         - name: Set up Python
           uses: actions/setup-python@v5
           with:
-            python-version: '3.12'  # Substitua pela versão do Python que você usa (ex.: '3.9')
+            python-version: '3.12'
 
         - name: Install Pipenv
           run: |
@@ -33,9 +33,14 @@ jobs:
         needs: tests
         if: success() && github.ref == 'refs/heads/prod'
         steps:
-        - name: Build Image
+
+        - name: Log in no Docker Hub
           run: |
-            echo "Building image...."
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+        - name: Build Docker Image
+          run: |
+            docker build -f Containerfile -t my-image-name:latest .
 
         - name: Deploying Image
           run: |
