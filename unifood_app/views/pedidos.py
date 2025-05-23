@@ -20,7 +20,7 @@ def criar_pedido(request):
             valor_total=Decimal('0.00') 
         )
 
-        return redirect('pagina_do_carrinho')  # Substituir pelo seu nome de url
+        return redirect('templates/unifood_app/pedidos/pagina_do_carrinho')  # Substituir pelo seu nome de url
 
     return redirect('pagina_de_produtos')  # Se não for POST, volta para produtos
 
