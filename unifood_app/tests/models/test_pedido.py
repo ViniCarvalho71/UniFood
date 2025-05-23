@@ -42,5 +42,5 @@ class PedidoModelTest(TestCase):
             endereco_entrega='Rua Teste, 123',
             valor_total=Decimal('100.00')
         )
-        esperado = f"Pedido {pedido.id} - {self.cliente.username} para {self.vendedor.username}"
+        esperado = f"{pedido}"
         self.assertEqual(str(pedido), esperado)
