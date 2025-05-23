@@ -9,6 +9,7 @@ class PedidoViewTest(TestCase):
     def setUp(self):
         self.cliente = User.objects.create_user(username='cliente', password='senha123')
         self.vendedor = User.objects.create_user(username='vendedor', password='senha123')
+        self.cliente2 = User.objects.create_user(username="cliente2", password="senha123")
 
         self.produto = Produto.objects.create(
             vendedor=self.vendedor,
@@ -19,6 +20,18 @@ class PedidoViewTest(TestCase):
             foto = 'media/produtos/fotos/6159Mountain-Gaot.jpg'
 
         )
+
+        self.produto2 = Produto.objects.create(
+            vendedor=self.vendedor,
+            nome='goated',
+            descricao='goating',
+            preco=Decimal('50.00'),
+            estoque = 10,
+            foto = 'media/produtos/fotos/6159Mountain-Gaot.jpg'
+
+        )
+        self.list_users = [self.cliente, self.cliente2]
+        self.list_produtos = [self.produto, self.produto2]
 
         self.client = Client()
 
@@ -40,3 +53,21 @@ class PedidoViewTest(TestCase):
         self.assertEqual(pedido.vendedor, self.vendedor)
         self.assertEqual(pedido.endereco_entrega, 'Rua Teste, 123')
         self.assertEqual(pedido.status, 'pendente')
+
+        print("Pedido criado com sucesso")
+
+
+    def test_listar_carrinho(self):
+
+        for i, user in enumerate(self.list_users):
+            self.client.login(username=user.username, password="senha123")
+
+            self.client.post(reverse('criar_pedido'), {
+                'produto_id': self.list_produtos[i].id,
+                'endereco_entrega': 'Rua Teste, 123'
+            })
+
+            self.client.post(reverse('listar_carrinho'))
+            self.client.logout()
+
+        print("Carrinhos listados com sucesso")

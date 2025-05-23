@@ -22,11 +22,12 @@ def criar_pedido(request):
 
         return redirect('templates/unifood_app/pedidos/pagina_do_carrinho')  # Substituir pelo seu nome de url
 
-    return redirect('pagina_de_produtos')  # Se não for POST, volta para produtos
+    return redirect('templates/unifood_app/usuario/base_page')  # Se não for POST, volta para produtos
 
-def lista_pedidos(request):
-    pedidos = Pedido.objects.all()
-    return render(request, 'unifood_app/pedidos/lista.html', {'pedidos': pedidos})
+def listar_carrinho(request):
+    carrinho = Pedido.objects.filter(cliente=request.user)
+    return render(request, 'unifood_app/pedidos/pagina_do_carrinho.html', {'carrinho': carrinho})
+
 
 def detalhe_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)
