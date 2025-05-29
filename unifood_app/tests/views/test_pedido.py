@@ -35,10 +35,10 @@ class PedidoViewTest(TestCase):
 
         self.client = Client()
 
-    def test_criacao_pedido(self):
+    def test_adicionar_ao_carrinho(self):
         self.client.login(username='cliente', password='senha123')
 
-        response = self.client.post(reverse('criar_pedido'), {
+        response = self.client.post(reverse('adicionar_ao_carrinho'), {
             'produto_id': self.produto.id,
             'endereco_entrega': 'Rua Teste, 123'
         })
@@ -62,7 +62,7 @@ class PedidoViewTest(TestCase):
         for i, user in enumerate(self.list_users):
             self.client.login(username=user.username, password="senha123")
 
-            self.client.post(reverse('criar_pedido'), {
+            self.client.post(reverse('adicionar_ao_carrinho'), {
                 'produto_id': self.list_produtos[i].id,
                 'endereco_entrega': 'Rua Teste, 123'
             })
@@ -71,3 +71,4 @@ class PedidoViewTest(TestCase):
             self.client.logout()
 
         print("Carrinhos listados com sucesso")
+
