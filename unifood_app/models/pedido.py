@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 class Pedido(models.Model):
     STATUS_CHOICES = [
         ('pendente', 'Pendente'),
-        ('concluido', 'Concluído'),
+        ('concluido', 'Concluído')
     ]
 
     cliente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pedidos_cliente')
