@@ -1,6 +1,6 @@
-from models import models
+from django.db import models
 from django.core.validators import MinValueValidator
-from unifood_app import Pedido, Produto
+from unifood_app.models import Pedido, Produto
 
 class Item_Pedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='itens')
