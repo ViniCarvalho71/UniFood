@@ -77,9 +77,18 @@ class PedidoViewTest(TestCase):
         print("Carrinhos listados com sucesso")
 
     def test_confirmar_pagamento(self):
+        self.assertEqual(self.pedido.status, 'pendente')
+        
         self.client.login(username=self.vendedor, password='senha123')
-        self.client.post(reverse('confirmar_pagamento'),{
+        response = self.client.post(reverse('confirmar_pagamento'),{
             'pedido_id': self.pedido.id
         })
+        
+        self.assertEqual(response.status_code, 302)
+
+        self.pedido.refresh_from_db()
+        
+        self.assertEqual(self.pedido.status, 'concluido')
+        
         self.client.logout()
         print("Pagamento efetuado com sucesso!")
