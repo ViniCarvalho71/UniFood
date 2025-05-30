@@ -18,7 +18,6 @@ class PedidoViewTest(TestCase):
             preco=Decimal('50.00'),
             estoque = 10,
             foto = 'media/produtos/fotos/6159Mountain-Gaot.jpg'
-
         )
 
         self.produto2 = Produto.objects.create(
@@ -30,6 +29,13 @@ class PedidoViewTest(TestCase):
             foto = 'media/produtos/fotos/6159Mountain-Gaot.jpg'
 
         )
+        self.pedido = Pedido.objects.create(
+            cliente = self.cliente,
+            vendedor = self.vendedor,
+            endereco_entrega = 'logo ali',
+            valor_total=Decimal('0.00')
+        )
+
         self.list_users = [self.cliente, self.cliente2]
         self.list_produtos = [self.produto, self.produto2]
 
@@ -43,18 +49,16 @@ class PedidoViewTest(TestCase):
             'endereco_entrega': 'Rua Teste, 123'
         })
 
-        # Verificar se foi redirecionado (status 302)
         self.assertEqual(response.status_code, 302)
 
-        # Verificar se o pedido foi criado corretamente
         pedido = Pedido.objects.first()
         self.assertIsNotNone(pedido)
         self.assertEqual(pedido.cliente, self.cliente)
         self.assertEqual(pedido.vendedor, self.vendedor)
-        self.assertEqual(pedido.endereco_entrega, 'Rua Teste, 123')
+        self.assertEqual(pedido.endereco_entrega, 'logo ali')
         self.assertEqual(pedido.status, 'pendente')
 
-        print("Pedido criado com sucesso")
+        print("Adicionado ao carrinho com sucesso")
 
 
     def test_listar_carrinho(self):
@@ -72,3 +76,10 @@ class PedidoViewTest(TestCase):
 
         print("Carrinhos listados com sucesso")
 
+    def test_confirmar_pagamento(self):
+        self.client.login(username=self.vendedor, password='senha123')
+        self.client.post(reverse('confirmar_pagamento'),{
+            'pedido_id': self.pedido.id
+        })
+        self.client.logout()
+        print("Pagamento efetuado com sucesso!")

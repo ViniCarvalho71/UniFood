@@ -43,7 +43,8 @@ def adicionar_ao_carrinho(request):
 
 def listar_carrinho(request):
     carrinho = Pedido.objects.filter(
-        cliente=request.user
+        cliente=request.user,
+        status='pendente'
         )
     return render(
         request,
@@ -51,7 +52,17 @@ def listar_carrinho(request):
         {'carrinho': carrinho}
         )
 
-
+def confirmar_pagamento(request):
+    pedido_id = request.POST.get("pedido_id")
+    pedido = get_object_or_404(Pedido, id=pedido_id, status='pendente')
+    pedido.status = "concluido"
+    pedido.save()
+    return render(
+        request,
+        'unifood_app/pedidos/pagina_do_carrinho.html',
+        {'pedido': pedido}
+        )
+# À resolver
 def detalhe_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)
     return render(request, 'pedidos/detalhe.html', {'pedido': pedido})
