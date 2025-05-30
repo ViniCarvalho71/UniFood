@@ -8,6 +8,6 @@ def listar_itens_pedido(request, pedido_id):
     itens = Item_Pedido.objects.filter(pedido=pedido)
     return render(
         request,
-        'unifood_app/pedidos/lista_itens_pedido.html',
+        'unifood_app/itens_pedido/lista_itens_pedido.html',
         {'pedido': pedido, 'itens': itens}
     )
