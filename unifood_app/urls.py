@@ -10,4 +10,5 @@ urlpatterns = [
     path('pedido/adicionar_ao_carrinho', pedidos.adicionar_ao_carrinho, name="adicionar_ao_carrinho"),
     path('produto/feed_produtos', produto.feed_produtos, name="feed"),
     path('item_pedido/listar/<int:pedido_id>/', item_pedido.listar_itens_pedido, name="listar_itens_pedido"),
+    path('pedido/confirmar_pagamento', pedidos.confirmar_pagamento,name='confirmar_pagamento')
 ]
