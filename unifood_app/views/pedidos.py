@@ -57,11 +57,19 @@ def confirmar_pagamento(request):
     pedido = get_object_or_404(Pedido, id=pedido_id, status='pendente')
     pedido.status = "concluido"
     pedido.save()
+    return redirect(
+        'listar_pedidos'
+    )
+
+def listar_pedidos(request):
+    pedidos = Pedido.objects.filter(vendedor=request.user)
+    contexto = {'pedidos':pedidos}
     return render(
         request,
-        'unifood_app/pedidos/pagina_do_carrinho.html',
-        {'pedido': pedido}
+        'unifood_app/pedidos/lista_pedidos.html',
+        contexto
         )
+
 # À resolver
 def detalhe_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for pedido in pedidos %}
+        <a href="{% url 'listar_itens_pedido' pedido.id %}">Pedido {{ pedido.id }} {{ pedido.cliente.username }}</a>
+        <p>Valor total: {{ pedido.valor_total }}</p>
+    {% endfor %}
+</body>
+</html>

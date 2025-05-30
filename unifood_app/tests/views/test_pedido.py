@@ -58,7 +58,7 @@ class PedidoViewTest(TestCase):
         self.assertEqual(pedido.endereco_entrega, 'logo ali')
         self.assertEqual(pedido.status, 'pendente')
 
-        print("Adicionado ao carrinho com sucesso")
+        print("\nAdicionado ao carrinho com sucesso")
 
 
     def test_listar_carrinho(self):
@@ -74,7 +74,7 @@ class PedidoViewTest(TestCase):
             self.client.post(reverse('listar_carrinho'))
             self.client.logout()
 
-        print("Carrinhos listados com sucesso")
+        print("\nCarrinhos listados com sucesso!")
 
     def test_confirmar_pagamento(self):
         self.assertEqual(self.pedido.status, 'pendente')
@@ -91,4 +91,17 @@ class PedidoViewTest(TestCase):
         self.assertEqual(self.pedido.status, 'concluido')
         
         self.client.logout()
-        print("Pagamento efetuado com sucesso!")
+        print("\nPagamento efetuado com sucesso!")
+
+    def test_listar_pedido(self):
+        self.client.login(username=self.vendedor, password='senha123')
+        response = self.client.get(reverse(
+            'listar_pedidos'
+                                           ))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'Pedido {self.pedido.id}')
+        self.assertContains(response, self.cliente.username)
+        self.assertContains(response, self.pedido.valor_total)
+        self.client.logout()
+        print('\nPedidos listados com sucesso!')
