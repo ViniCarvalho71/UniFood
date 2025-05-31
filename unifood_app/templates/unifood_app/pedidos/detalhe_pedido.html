@@ -22,8 +22,9 @@
 </ul>
 
 {% if request.user == pedido.vendedor and pedido.status == 'pendente' %}
-    <form method="post" action="{% url 'confirmar_pagamento' pedido.id %}">
+    <form method="post" action="{% url 'confirmar_pagamento' %}">
         {% csrf_token %}
+        <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
         <button type="submit">Confirmar Pagamento</button>
     </form>
 {% endif %}

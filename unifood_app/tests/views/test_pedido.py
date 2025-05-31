@@ -58,7 +58,7 @@ class PedidoViewTest(TestCase):
         self.assertEqual(pedido.status, 'pendente')
         self.client.logout()
 
-        print("\nAdicionado ao carrinho com sucesso")
+        print("\nPedidos: Adicionado ao carrinho com sucesso")
     
     def test_adicionar_o_mesmo_produto_outra_vez(self):
         self.client.login(username='cliente2', password='senha123')
@@ -73,7 +73,7 @@ class PedidoViewTest(TestCase):
         item_pedido = Item_Pedido.objects.get(produto=self.produto, pedido=pedido)
         self.assertEqual(item_pedido.quantidade, 2)
 
-        print(f'\nItem {item_pedido.produto.nome} adicionado duas vezes com sucesso')
+        print(f'\nPedidos: Item {item_pedido.produto.nome} adicionado duas vezes com sucesso')
         
     def test_listar_carrinho(self):
 
@@ -88,16 +88,14 @@ class PedidoViewTest(TestCase):
             self.client.post(reverse('listar_carrinho'))
             self.client.logout()
 
-        print("\nCarrinhos listados com sucesso!")
+        print("\nPedidos: Carrinhos listados com sucesso!")
 
     def test_confirmar_pagamento(self):
         self.assertEqual(self.pedido.status, 'pendente')
         
         self.client.login(username=self.vendedor, password='senha123')
         response = self.client.post(
-            reverse(
-                'confirmar_pagamento'
-                ),
+            reverse('confirmar_pagamento'),
             {
             'pedido_id': self.pedido.id
             })
@@ -109,7 +107,7 @@ class PedidoViewTest(TestCase):
         self.assertEqual(self.pedido.status, 'concluido')
         
         self.client.logout()
-        print("\nPagamento efetuado com sucesso!")
+        print("\nPedidos: Pagamento efetuado com sucesso!")
 
     def test_listar_pedido(self):
         self.client.login(username=self.vendedor, password='senha123')
@@ -122,26 +120,37 @@ class PedidoViewTest(TestCase):
         self.assertContains(response, self.cliente.username)
         self.assertContains(response, self.pedido.valor_total)
         self.client.logout()
-        print('\nPedidos listados com sucesso!')
+        print('\nPedidos: Pedidos listados com sucesso!')
 
     def test_detalhes_pedido_cliente(self):
-        self.client.login(username='cliente2', password='senha123')
-        self.client.post(reverse('adicionar_ao_carrinho'),
-                         {
-                            'produto_id': self.produto.id,
-                            'endereco_entrega': 'Rua Teste, 123'
-                         })
-        pedido = Pedido.objects.get(cliente=self.cliente2, status='pendente')
+        self.client.login(username='cliente', password='senha123')
         response = self.client.post(reverse('detalhe_pedido'), {
-            'pedido_id': pedido.id
+            'pedido_id': self.pedido.id
         })
         
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, f'Pedido {pedido.id}')
+        self.assertContains(response, f'Pedido {self.pedido.id}')
         self.assertContains(response, self.cliente.username)
         self.assertContains(response, self.vendedor.username)
-        self.assertContains(response, pedido.endereco_entrega)
-        self.assertContains(response, pedido.valor_total)
+        self.assertContains(response, self.pedido.endereco_entrega)
+        self.assertContains(response, self.pedido.valor_total)
         self.assertContains(response, f'Aguardando confirmação de pagamento pelo vendedor.')
         self.assertNotContains(response, f'Confirmar Pagamento')
-        print(f'\nVisualização do pedido certo!')
+        print(f'\nPedidos: Visualização do pedido pelo cliente certo!')
+        
+
+    def test_detalhes_pedido_vendedor(self):
+        self.client.login(username='vendedor', password='senha123')
+        response = self.client.post(reverse('detalhe_pedido'), {
+            'pedido_id': self.pedido.id
+        })
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'Pedido {self.pedido.id}')
+        self.assertContains(response, self.cliente.username)
+        self.assertContains(response, self.vendedor.username)
+        self.assertContains(response, self.pedido.endereco_entrega)
+        self.assertContains(response, self.pedido.valor_total)
+        self.assertNotContains(response, f'Aguardando confirmação de pagamento pelo vendedor.')
+        self.assertContains(response, f'Confirmar Pagamento')
+        print(f'\nPedidos: Visualização do pedido pelo vendedor certo!')

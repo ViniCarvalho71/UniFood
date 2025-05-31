@@ -54,16 +54,16 @@ def listar_carrinho(request):
         )
 
 def confirmar_pagamento(request):
-    
-    pedido_id = request.POST.get("pedido_id")
-    pedido = get_object_or_404(Pedido, id=pedido_id, status='pendente')
-    if request.user != pedido.vendedor:
-        return HttpResponse("Você não tem permissão para concluir este pagamento", status=403)
-    pedido.status = "concluido"
-    pedido.save()
-    return redirect(
-        'listar_pedidos'
-    )
+    if request.method == 'POST':    
+        pedido_id = request.POST.get("pedido_id")
+        pedido = get_object_or_404(Pedido, id=pedido_id, status='pendente')
+        if request.user != pedido.vendedor:
+            return HttpResponse("Você não tem permissão para concluir este pagamento", status=403)
+        pedido.status = "concluido"
+        pedido.save()
+        return redirect(
+            'listar_pedidos'
+        )
 
 def listar_pedidos(request):
     pedidos = Pedido.objects.filter(vendedor=request.user)
