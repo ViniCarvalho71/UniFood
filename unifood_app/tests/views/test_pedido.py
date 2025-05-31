@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from unifood_app.models import Pedido
-from unifood_app.models import Produto
+from unifood_app.models import Pedido, Produto, Item_Pedido
 from decimal import Decimal
 from django.urls import reverse
 
@@ -42,7 +41,7 @@ class PedidoViewTest(TestCase):
         self.client = Client()
 
     def test_adicionar_ao_carrinho(self):
-        self.client.login(username='cliente', password='senha123')
+        self.client.login(username='cliente2', password='senha123')
 
         response = self.client.post(reverse('adicionar_ao_carrinho'), {
             'produto_id': self.produto.id,
@@ -51,16 +50,31 @@ class PedidoViewTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-        pedido = Pedido.objects.first()
+        pedido = Pedido.objects.filter(cliente=self.cliente2).get()
         self.assertIsNotNone(pedido)
-        self.assertEqual(pedido.cliente, self.cliente)
+        self.assertEqual(pedido.cliente, self.cliente2)
         self.assertEqual(pedido.vendedor, self.vendedor)
-        self.assertEqual(pedido.endereco_entrega, 'logo ali')
+        self.assertEqual(pedido.endereco_entrega, 'Rua Teste, 123')
         self.assertEqual(pedido.status, 'pendente')
+        self.client.logout()
 
         print("\nAdicionado ao carrinho com sucesso")
+    
+    def test_adicionar_o_mesmo_produto_outra_vez(self):
+        self.client.login(username='cliente2', password='senha123')
 
+        for _ in range(0,2):
+            self.client.post(reverse('adicionar_ao_carrinho'), {
+                'produto_id': self.produto.id,
+                'endereco_entrega': 'Rua Teste, 123'
+            })
+        pedido = Pedido.objects.get(cliente=self.cliente2, status='pendente')
 
+        item_pedido = Item_Pedido.objects.get(produto=self.produto, pedido=pedido)
+        self.assertEqual(item_pedido.quantidade, 2)
+
+        print(f'\nItem {item_pedido.produto.nome} adicionado duas vezes com sucesso')
+        
     def test_listar_carrinho(self):
 
         for i, user in enumerate(self.list_users):
@@ -80,9 +94,13 @@ class PedidoViewTest(TestCase):
         self.assertEqual(self.pedido.status, 'pendente')
         
         self.client.login(username=self.vendedor, password='senha123')
-        response = self.client.post(reverse('confirmar_pagamento'),{
+        response = self.client.post(
+            reverse(
+                'confirmar_pagamento'
+                ),
+            {
             'pedido_id': self.pedido.id
-        })
+            })
         
         self.assertEqual(response.status_code, 302)
 
@@ -105,3 +123,25 @@ class PedidoViewTest(TestCase):
         self.assertContains(response, self.pedido.valor_total)
         self.client.logout()
         print('\nPedidos listados com sucesso!')
+
+    def test_detalhes_pedido_cliente(self):
+        self.client.login(username='cliente2', password='senha123')
+        self.client.post(reverse('adicionar_ao_carrinho'),
+                         {
+                            'produto_id': self.produto.id,
+                            'endereco_entrega': 'Rua Teste, 123'
+                         })
+        pedido = Pedido.objects.get(cliente=self.cliente2, status='pendente')
+        response = self.client.post(reverse('detalhe_pedido'), {
+            'pedido_id': pedido.id
+        })
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'Pedido {pedido.id}')
+        self.assertContains(response, self.cliente.username)
+        self.assertContains(response, self.vendedor.username)
+        self.assertContains(response, pedido.endereco_entrega)
+        self.assertContains(response, pedido.valor_total)
+        self.assertContains(response, f'Aguardando confirmação de pagamento pelo vendedor.')
+        self.assertNotContains(response, f'Confirmar Pagamento')
+        print(f'\nVisualização do pedido certo!')
