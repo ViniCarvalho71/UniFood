@@ -38,9 +38,9 @@ def adicionar_ao_carrinho(request):
         pedido.valor_total = total
         pedido.save()
 
-        return redirect('pedidos/listar_carrinho')
+        return redirect('unifood_app/pedidos/lista_pedidos.html')
 
-    return redirect('templates/unifood_app/usuario/base_page') 
+    return redirect('unifood_app/usuario/base_page.html') 
 
 def listar_carrinho(request):
     carrinho = Pedido.objects.filter(
@@ -76,7 +76,7 @@ def listar_pedidos(request):
         )
 
 def detalhe_pedido(request):
-    pedido_id = request.POST.get("pedido_id")
+    pedido_id = request.GET.get("pedido_id")
     pedido = get_object_or_404(Pedido, id=pedido_id)
 
     if pedido.cliente != request.user and pedido.vendedor != request.user:

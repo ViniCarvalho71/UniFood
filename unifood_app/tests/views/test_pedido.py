@@ -58,7 +58,7 @@ class PedidoViewTest(TestCase):
         self.assertEqual(pedido.status, 'pendente')
         self.client.logout()
 
-        print("\nPedidos: Adicionado ao carrinho com sucesso")
+        print("\nPedidos: Adicionado ao carrinho com sucesso!")
     
     def test_adicionar_o_mesmo_produto_outra_vez(self):
         self.client.login(username='cliente2', password='senha123')
@@ -73,7 +73,7 @@ class PedidoViewTest(TestCase):
         item_pedido = Item_Pedido.objects.get(produto=self.produto, pedido=pedido)
         self.assertEqual(item_pedido.quantidade, 2)
 
-        print(f'\nPedidos: Item {item_pedido.produto.nome} adicionado duas vezes com sucesso')
+        print(f'\nPedidos: Item {item_pedido.produto.nome} adicionado duas vezes com sucesso!')
         
     def test_listar_carrinho(self):
 
@@ -122,9 +122,10 @@ class PedidoViewTest(TestCase):
         self.client.logout()
         print('\nPedidos: Pedidos listados com sucesso!')
 
+
     def test_detalhes_pedido_cliente(self):
         self.client.login(username='cliente', password='senha123')
-        response = self.client.post(reverse('detalhe_pedido'), {
+        response = self.client.get(reverse('detalhe_pedido'), {
             'pedido_id': self.pedido.id
         })
         
@@ -141,7 +142,7 @@ class PedidoViewTest(TestCase):
 
     def test_detalhes_pedido_vendedor(self):
         self.client.login(username='vendedor', password='senha123')
-        response = self.client.post(reverse('detalhe_pedido'), {
+        response = self.client.get(reverse('detalhe_pedido'), {
             'pedido_id': self.pedido.id
         })
         
@@ -154,3 +155,22 @@ class PedidoViewTest(TestCase):
         self.assertNotContains(response, f'Aguardando confirmação de pagamento pelo vendedor.')
         self.assertContains(response, f'Confirmar Pagamento')
         print(f'\nPedidos: Visualização do pedido pelo vendedor certo!')
+    
+    def test_detalhes_pedido_nao_sendo_cliente_nem_vendedor(self):
+        self.client.login(username='cliente2', password='senha123')
+        response = self.client.get(reverse('detalhe_pedido'), {
+            'pedido_id': self.pedido.id
+        })
+        self.assertEqual(response.status_code, 403)
+        print('\nPedidos: Acesso negado para a visuallização dos detalhes do pedido!')
+    
+    def test_confirmar_pagamento_nao_sendo_vendedor(self):        
+        self.client.login(username=self.cliente, password='senha123')
+        response = self.client.post(
+            reverse('confirmar_pagamento'),
+            {
+            'pedido_id': self.pedido.id
+            })
+        
+        self.assertEqual(response.status_code, 403)
+        print('\nPedidos: Acesso negado para confirmar pagamento não sendo vendedor!')
