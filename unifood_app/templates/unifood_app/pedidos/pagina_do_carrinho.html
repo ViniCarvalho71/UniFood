@@ -1,0 +1,32 @@
+{% extends 'unifood_app/usuario/base_page.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4" style="max-width: 600px; border: 1px solid #ffcc99; border-radius: 8px; width: 100%;">
+
+        <h1 class="text-center mb-4" style="color: #ff6600;">Meu Carrinho</h1>
+
+        {% if carrinho %}
+            <ul class="list-group">
+                {% for pedido in carrinho %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="{% url 'detalhe_pedido' %}?pedido_id={{ pedido.id }}" 
+                               style="color: #ff6600; text-decoration: none; font-weight: bold;">
+                                Pedido {{ pedido.id }}
+                            </a>
+                            <p class="mb-0">Status: {{ pedido.status|capfirst }}</p>
+                        </div>
+                        <span><strong>R$ {{ pedido.valor_total }}</strong></span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-info text-center mt-3" role="alert">
+                Seu carrinho está vazio.
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
