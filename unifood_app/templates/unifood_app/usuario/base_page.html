@@ -1,54 +1,133 @@
 {% load static %}
 {% load bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documento</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/custom_alert.css' %}">
-</head>
-<header>
-    <nav class="navbar navbar-expand-lg fixed-top" style="background-color: #ff6600;">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white" href="#">Unifood</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon" style="color: white;"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/login">Login</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-<body>
-    {% if messages %}
-    <div class="container mt-3 d-flex justify-content-center" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 1050; width: 100%; max-width: 600px;">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-                <div class="pe-4">
-                    <i class="bi bi-info-circle"></i> <!-- Ícone do Bootstrap Icons -->
-                    <strong>Mensagem:</strong> {{ message }}
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div class="container d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
-        {% block content %}
-        {% endblock %}
-    </div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}UniFood{% endblock %}</title>
+  {% bootstrap_css %}
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fafb;
+    }
 
+.sidebar .logo {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Remova background branco */
+}
+.sidebar .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+
+    /* Sidebar fixa */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 60px;
+      background: linear-gradient(180deg, #ff9f00 0%, #ff6600 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 1rem;
+      gap: 2rem;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      z-index: 1030; /* acima do Bootstrap navbar padrão */
+    }
+
+    .sidebar .logo {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #ff6600;
+      font-size: 1.2rem;
+      user-select: none;
+    }
+
+    .sidebar button, .sidebar a {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .sidebar button:hover, .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    /* Espaço para conteúdo principal */
+    .main-content {
+      margin-left: 60px; /* mesma largura da sidebar */
+      padding: 1.5rem 2rem;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 50px;
+      }
+      .main-content {
+        margin-left: 50px;
+        padding: 1rem;
+      }
+      .sidebar button, .sidebar a {
+        font-size: 1.2rem;
+        width: 35px;
+        height: 35px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="logo">
+        <img src="/media/produtos/fotos/logo.png" alt="Logo UniFood">
+    </div>
+    <a href="{% url 'feed' %}" title="Home"><i class="fas fa-home"></i></a>
+    <a href="#" title="Pedidos"><i class="fas fa-clipboard-list"></i></a>
+    <a href="#" title="Estatísticas"><i class="fas fa-chart-bar"></i></a>
+    <a href="#" title="Produtos"><i class="fas fa-box-open"></i></a>
+    <a href="#" title="Notificações"><i class="fas fa-bell"></i></a>
+    <a href="#" title="Configurações"><i class="fas fa-cog"></i></a>
+  </nav>
+
+  <main class="main-content">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  {% bootstrap_javascript %}
+  <!-- Font Awesome JS para os ícones -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
