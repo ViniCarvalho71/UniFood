@@ -8,6 +8,7 @@ coverage = "*"
 django-bootstrap-v5 = "*"
 django = "*"
 pillow = "*"
+django-bootstrap5 = "*"
 
 [dev-packages]
 
