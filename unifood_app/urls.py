@@ -16,3 +16,4 @@ urlpatterns = [
     path('item_pedido/listar/<int:pedido_id>/', item_pedido.listar_itens_pedido, name="listar_itens_pedido"),
     path('api/produtos/', ProdutoCreateAPIView.as_view(), name='api-produto-create'),
 ]
+
