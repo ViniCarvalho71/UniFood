@@ -36,13 +36,13 @@ def Login(requests):
                     messages.error(requests,f'Credenciais inválidas!')
                     return render(requests,'unifood_app/usuario/login.html',{
                             'form': form,
-                            'error': 'Credenciais inválidas.'
+                            'error': 'Credenciais inválidas!'
                         })
             except:
                 messages.error(requests,f'Credenciais inválidas!')
                 return render(requests,'unifood_app/usuario/login.html',{
                         'form': form,
-                        'error': 'Credenciais inválidas.'
+                        'error': 'Credenciais inválidas!'
                     })
 
     elif requests.method == 'GET':
