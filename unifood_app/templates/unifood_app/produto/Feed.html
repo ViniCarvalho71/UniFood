@@ -1,27 +1,146 @@
 {% extends 'unifood_app/usuario/base_page.html' %}
 {% block content %}
-<div class="container my-4">
-    <h2 class="mb-4 text-center" style="color: #ff6600;">Produtos Disponíveis</h2>
+<style>
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(255, 102, 0, 0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 20px rgba(255, 102, 0, 0.3);
+    }
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+    .card-title {
+        color: #ff6600 !important;
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+    .card-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.95rem;
+        color: #555 !important;
+        min-height: 72px;
+    }
+    .btn-carrinho {
+        background-color: #ff6600 !important;
+        border: none !important;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-carrinho:hover {
+        background-color: #e65500 !important;
+    }
+    .preco-produto {
+        font-weight: 700;
+        color: #2a9d8f !important;
+        font-size: 1.1rem;
+    }
+    .container-title {
+        color: #ff6600 !important;
+        font-weight: 700;
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+    /* Modal img */
+    #modalImagemProduto {
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        padding: 10px;
+    }
+</style>
+
+<div class="container my-5" style="padding-top: 80px;">
+    <h2 class="container-title">Produtos Disponíveis</h2>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for produto in produtos %}
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                {% if produto.imagem %}
-                    <img src="{{ produto.imagem.url }}" class="card-img-top" alt="{{ produto.nome }}">
-                {% else %}
-                    <img src="https://via.placeholder.com/300x200?text=Sem+Imagem" class="card-img-top" alt="Sem imagem">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title" style="color: #ff6600;">{{ produto.nome }}</h5>
-                    <p class="card-text">{{ produto.descricao }}</p>
+            <div class="card h-100" 
+                data-nome="{{ produto.nome|escapejs }}" 
+                data-descricao="{{ produto.descricao|default:'Sem descrição'|escapejs }}" 
+                data-estoque="{{ produto.estoque }}"
+                data-preco="{{ produto.preco|floatformat:2 }}"
+                data-imagem="{% if produto.imagem %}{{ produto.imagem.url }}{% else %}https://via.placeholder.com/300x200?text=Sem+Imagem{% endif %}"
+                onclick="abrirModal(this)">
+                <img src="{% if produto.imagem %}{{ produto.imagem.url }}{% else %}https://via.placeholder.com/300x200?text=Sem+Imagem{% endif %}" class="card-img-top" alt="{{ produto.nome }}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ produto.nome }}</h5>
+                    <p class="card-text flex-grow-1">{{ produto.descricao }}</p>
                 </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <span class="fw-bold text-success">R$ {{ produto.preco }}</span>
-                    <button class="btn btn-sm text-white" style="background-color: #ff6600;">+ carrinho</button>
+                <div class="card-footer bg-transparent d-flex justify-content-between align-items-center border-0 pt-0">
+                    <span class="preco-produto">R$ {{ produto.preco|floatformat:2 }}</span>
+                    <button class="btn btn-carrinho text-white">+ Carrinho</button>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="produtoModal" tabindex="-1" aria-labelledby="produtoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal maior -->
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#ff6600; color:#fff;">
+        <h5 class="modal-title" id="produtoModalLabel">Detalhes do Produto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImagemProduto" src="" alt="Imagem do produto">
+        <h4 id="modalNome" style="color:#ff6600; font-weight:700;"></h4>
+        <p id="modalDescricao" style="color:#555;"></p>
+        <p><strong>Estoque disponível:</strong> <span id="modalEstoque"></span></p>
+        <p><strong>Preço:</strong> R$ <span id="modalPreco"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button id="btnAdicionarCarrinho" type="button" class="btn btn-carrinho text-white">Adicionar ao Carrinho</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function abrirModal(card) {
+        const nome = card.getAttribute('data-nome');
+        const descricao = card.getAttribute('data-descricao');
+        const estoque = card.getAttribute('data-estoque');
+        const preco = card.getAttribute('data-preco');
+        const imagem = card.getAttribute('data-imagem');
+
+        document.getElementById('modalNome').textContent = nome;
+        document.getElementById('modalDescricao').textContent = descricao;
+        document.getElementById('modalEstoque').textContent = estoque;
+        document.getElementById('modalPreco').textContent = preco;
+        document.getElementById('modalImagemProduto').src = imagem;
+        document.getElementById('modalImagemProduto').alt = `Imagem do produto ${nome}`;
+
+        // Aqui você pode adicionar ação no botão "Adicionar ao Carrinho"
+        const btnCarrinho = document.getElementById('btnAdicionarCarrinho');
+        btnCarrinho.onclick = function() {
+            alert(`Produto "${nome}" adicionado ao carrinho!`);
+            // Aqui você pode adicionar lógica real para adicionar ao carrinho, ex: AJAX, formulário, etc.
+        };
+
+        // Abrir modal usando Bootstrap 5
+        const modal = new bootstrap.Modal(document.getElementById('produtoModal'));
+        modal.show();
+    }
+</script>
 {% endblock %}
