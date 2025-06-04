@@ -13,3 +13,4 @@ class Usuario(models.Model):
     )
 
     ra = models.CharField(max_length=10, unique=True)
+    eh_vendedor = models.IntegerField(default=0) # 0 = Cliente, 1 = Vendedor

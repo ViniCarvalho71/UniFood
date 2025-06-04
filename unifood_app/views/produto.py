@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from rest_framework import generics, permissions
-from unifood_app.models import Produto
+from unifood_app.models import Produto, Usuario
 from unifood_app.serializers import ProdutoSerializer
 from unifood_app.forms import ProdutoForm
 
@@ -21,7 +21,9 @@ def Cadastro(request):
 # View tradicional para mostrar lista de produtos no template
 def feed_produtos(request):
     produtos = Produto.objects.all()
-    return render(request, 'unifood_app/produto/Feed.html', {'produtos': produtos})
+    eh_vendedor = Usuario.objects.filter(user = request.user)
+
+    return render(request, 'unifood_app/produto/Feed.html', {'produtos': produtos, 'eh_vendedor': eh_vendedor})
 
 # API REST para cadastro de produto
 class ProdutoCreateAPIView(generics.CreateAPIView):
