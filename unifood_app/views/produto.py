@@ -3,8 +3,10 @@ from rest_framework import generics, permissions
 from unifood_app.models import Produto, Usuario
 from unifood_app.serializers import ProdutoSerializer
 from unifood_app.forms import ProdutoForm
+from django.contrib.auth.decorators import login_required
 
 # View tradicional para cadastro via formulário HTML
+@login_required
 def Cadastro(request):
     if request.method == 'POST':
         form = ProdutoForm(request.POST, request.FILES)
@@ -19,9 +21,10 @@ def Cadastro(request):
     return render(request, "unifood_app/produto/cadastro.html", {'form': form})
 
 # View tradicional para mostrar lista de produtos no template
+@login_required
 def feed_produtos(request):
     produtos = Produto.objects.all()
-    eh_vendedor = Usuario.objects.filter(user = request.user and Usuario.eh_vendedor == 1).exists() if request.user.is_authenticated else False
+    eh_vendedor = Usuario.objects.filter(user=request.user, eh_vendedor=1).exists()  # Verifica se o usuário é vendedor
 
     return render(request, 'unifood_app/produto/Feed.html', {'produtos': produtos, 'eh_vendedor': eh_vendedor})
 
