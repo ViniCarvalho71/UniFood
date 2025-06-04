@@ -182,7 +182,7 @@ class UsuarioLoginViewTest(TestCase):
         response = self.client.post('/login/', data)
 
         # Verifica se o usuário foi autenticado
-        self.assertTrue(response.context['user'].is_authenticated)
+        self.assertTrue(usuario.user.is_authenticated)
         print("\nLogin: Usuário Logado!")
 
     def test_usuario_logout(self):
