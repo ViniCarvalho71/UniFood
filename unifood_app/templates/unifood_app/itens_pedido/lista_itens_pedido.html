@@ -1,11 +1,27 @@
-<table>
-  <tbody>
-    {% for item in itens %}
-      <tr>
-        <td>{{ item.produto.nome }}</td>
-        <td>{{ item.quantidade }}</td>
-        <td>{{ item.preco_unitario }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% extends 'unifood_app/usuario/base_page.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4" style="max-width: 600px; border: 1px solid #ffcc99; border-radius: 8px; width: 100%;">
+        <h2 class="text-center mb-4" style="color: #ff6600;">Itens do Pedido</h2>
+
+        {% if itens %}
+            <ul class="list-group">
+                {% for item in itens %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <span style="color: #ff6600; font-weight: bold;">{{ item.produto.nome }}</span>
+                            <p class="mb-0">Quantidade: {{ item.quantidade }}</p>
+                        </div>
+                        <span><strong>R$ {{ item.preco_unitario }}</strong></span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-info text-center mt-3" role="alert">
+                Nenhum item encontrado neste pedido.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
