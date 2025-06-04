@@ -113,13 +113,11 @@
         <img src="/media/produtos/fotos/logo.png" alt="Logo UniFood">
     </div>
     <a href="{% url 'feed' %}" title="Home"><i class="fas fa-home"></i></a>
-    <a href="#" title="Pedidos"><i class="fas fa-clipboard-list"></i></a>
-    <a href="#" title="Estatísticas"><i class="fas fa-chart-bar"></i></a>
+    <a href="{% url 'listar_carrinho' %}" title="Carrinho"><i class="fas fa-shopping-cart"></i></a>
     {% if eh_vendedor %}
-    <a href="{% url 'cadastro' %}" title="Produtos" class="cadastro"><i class="fas fa-box-open"></i></a>
+    <a href="{% url 'cadastro' %}" title="Produtos" class="cadastro"><i class="fas fa-clipboard-list"></i></a>
+    <a href="{% url 'listar_pedidos' %}" title="Pedidos" class="pedido"><i class="fas fa-box-open"></i></a>
     {% endif %}
-    <a href="#" title="Notificações"><i class="fas fa-bell"></i></a>
-    <a href="#" title="Configurações"><i class="fas fa-cog"></i></a>
   </nav>
 
   <main class="main-content">
