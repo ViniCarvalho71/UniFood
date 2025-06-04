@@ -41,6 +41,11 @@ jobs:
         - name: Build Docker Image
           run: |
             docker build -f Containerfile -t unifood-image:latest .
+            docker tag unifood-image:latest ${{ secrets.DOCKER_USERNAME }}/unifood-image:latest
+
+        - name: Push Docker Image
+          run: |
+            docker push ${{ secrets.DOCKER_USERNAME }}/unifood-image:latest
 
         - name: Deploying Image
           run: |
