@@ -21,7 +21,7 @@ def Cadastro(request):
 # View tradicional para mostrar lista de produtos no template
 def feed_produtos(request):
     produtos = Produto.objects.all()
-    eh_vendedor = Usuario.objects.filter(user = request.user)
+    eh_vendedor = Usuario.objects.filter(user = request.user and Usuario.eh_vendedor == 1).exists() if request.user.is_authenticated else False
 
     return render(request, 'unifood_app/produto/Feed.html', {'produtos': produtos, 'eh_vendedor': eh_vendedor})
 
