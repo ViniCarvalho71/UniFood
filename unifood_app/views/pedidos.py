@@ -29,6 +29,9 @@ def adicionar_ao_carrinho(request):
             }
         )
 
+        produto.estoque -= 1
+        produto.save()
+
         if not item_criado:
             item_pedido.quantidade += 1
             item_pedido.save()
@@ -38,9 +41,9 @@ def adicionar_ao_carrinho(request):
         pedido.valor_total = total
         pedido.save()
 
-        return redirect('unifood_app/pedidos/lista_pedidos.html')
+        return redirect('listar_pedidos')
 
-    return redirect('unifood_app/usuario/base_page.html') 
+    return redirect('feed') 
 
 def listar_carrinho(request):
     carrinho = Pedido.objects.filter(
