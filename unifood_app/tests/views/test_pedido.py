@@ -174,3 +174,16 @@ class PedidoViewTest(TestCase):
         
         self.assertEqual(response.status_code, 403)
         print('\nPedidos: Acesso negado para confirmar pagamento não sendo vendedor!')
+
+    def test_remover_pedido(self):
+        self.client.login(username=self.cliente, password='senha123')
+        response = self.client.post(
+            reverse('remover_pedido'),
+            {
+                'pedido_id': self.pedido.id
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        

@@ -41,10 +41,11 @@ def adicionar_ao_carrinho(request):
         pedido.valor_total = total
         pedido.save()
 
-        return redirect('listar_pedidos')
+        return redirect('feed')
 
     return redirect('feed') 
 
+@login_required
 def listar_carrinho(request):
     carrinho = Pedido.objects.filter(
         cliente=request.user,
@@ -56,6 +57,7 @@ def listar_carrinho(request):
         {'carrinho': carrinho}
         )
 
+@login_required
 def confirmar_pagamento(request):
     if request.method == 'POST':    
         pedido_id = request.POST.get("pedido_id")
@@ -68,6 +70,7 @@ def confirmar_pagamento(request):
             'listar_pedidos'
         )
 
+@login_required
 def listar_pedidos(request):
     pedidos = Pedido.objects.filter(vendedor=request.user)
 
@@ -78,6 +81,7 @@ def listar_pedidos(request):
         contexto
         )
 
+@login_required
 def detalhe_pedido(request):
     pedido_id = request.GET.get("pedido_id")
     pedido = get_object_or_404(Pedido, id=pedido_id)
@@ -89,3 +93,19 @@ def detalhe_pedido(request):
                   'unifood_app/pedidos/detalhe_pedido.html',
                   {'pedido': pedido}
                   )
+
+@login_required
+def remover_pedido(request):
+    if request.method == 'POST':
+        pedido_id = request.POST.get("pedido_id")
+        pedido = get_object_or_404(Pedido, id=pedido_id, status='pendente')
+        item_pedido = Item_Pedido.objects.filter(pedido=pedido)
+
+        for item in item_pedido:
+            produto = item.produto
+            produto.estoque += item.quantidade
+            produto.save()
+
+
+        pedido.delete()
+        return redirect('feed')
