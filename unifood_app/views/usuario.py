@@ -2,7 +2,6 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.password_validation import validate_password
 from unifood_app.models import Usuario
 from unifood_app.forms import RegisterForm, LoginForm
 
@@ -10,9 +9,9 @@ from unifood_app.forms import RegisterForm, LoginForm
 # Create your views here.
 def Login(requests):
     if requests.user.is_authenticated:
-            return render(requests, 'unifood_app/usuario/teste.html', {
+            return redirect('/produto/feed_produtos', {
                         'is_authenticated': True,
-                    })
+                    }) 
 
     if requests.method == 'POST':
         form = LoginForm(requests.POST)
@@ -28,7 +27,7 @@ def Login(requests):
 
                 if user is not None:
                     login(requests, user)
-                    return render(requests, 'unifood_app/usuario/teste.html', {
+                    return redirect('/produto/feed_produtos', {
                         'user': user,
                         'success': 'Login realizado com sucesso!',
                     })
